@@ -1,0 +1,127 @@
+\documentclass[usletter]{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{scribe}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+\begin{document}
+
+
+\makeheader{Minsheng Zhang}                            % your name
+           {January 21, 2015}                          % lecture date
+           {1}                                         % lecture number
+           {Introduction and Review}  % lecture title
+
+\noindent
+This Lecture we had an introduction about how the class 
+would be organized for the whole semester including References\cite{DPV}\cite{JS}\cite{ws} and
+Gradings. Other than that, we had an discussion of the reduction 
+theory on several seaching algorithms.
+
+\section{Reduction}
+A reduction is an algorithm for transforming one problem into another problem.
+With reduction, we can solve problem A by solving problem B. One good example is to solve the
+Gcd(greatest comon divisor) problem using Euclid algorithm and then calculate the Lcm(least common multiple) 
+with reduction by using the result of Gcd.
+\begin{align}
+A \rightarrow B
+\end{align}
+There are two different types of Reduction. One is self reduction 
+\begin{align}
+A \rightarrow A
+\end{align}
+We can use the self reduction to reduce the size of the problem and call the function recursively.
+And the other is transformation as shown above to solve the Lcm problem.
+
+\section{Sort algorithms}
+In the class, we reviewed several different sort algorithms and below are the pseudo-codes. First, we had bubble sort algorithm. First, we solved the problem by self reduction using a recursive call. We assume there is
+a function $move(A, i, n)$ which finds index of minimal in $Ai\cdots An$. In the pseudo-code we can see that BubbleSort funtion calls 
+it self with a same size of the input.
+
+\begin{algorithm}
+\caption{Bubble Sort}
+\begin{algorithmic}[1]
+\Procedure{BubbleSort}{A, i, n}
+\If {$i < n$}
+	\State $m = move(A,i,n)$
+	\State $swap(A[i],A[m])$
+	\State $BubbleSort(A,i+1,n)$
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Then we got an iterative version of the bubble sort algorithm. We used these two different implementations of bubble sort  for comparison and show that both recursive and iterative versions are correct.
+\begin{algorithm}
+\caption{Bubble Sort}
+\begin{algorithmic}[1]
+\Procedure{BubbleSort}{A, i, n}
+\For{$i = 1 \cdots n$}
+	\State $m = move(A,i,n)$
+	\State $swap(A[i],A[m])$
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+After that, we had the sort algorithm using the priority queue(heap). We assumed there are two heap functions.
+One is $insert(a)$ and the other is $delete()$ to delete the min in the heap. To maintain the priority queue, the complexity 
+of insert and delete are all $O(\log{}n)$. So the complexity of the overall algorithm is $O(n\log{}n)$. In this algorithm, we solved the
+sort problem by using functions of Priority Queue insert and delete. In this way, the sort problem is reducted to the priority queue
+problem. It is a transformation reduction.
+
+\begin{algorithm}
+\caption{Sort using Priority Queue}  
+\begin{algorithmic}[1]
+\Procedure{Sort}{A, n}
+\State $H \gets EmptyQueue$
+\For{$i = 1 \cdots n$}
+        \State $H.insert(A[i])$
+\EndFor
+\For{$i = 1 \cdots n$}
+        \State $A[i] = H.delete()$
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\section{Mathematical Induction}
+\noindent
+To prove the correctness of the above algorithm. We use the Mathematical Induction method. Of course, we can show algorithm is correct with 
+small number of input by showing procedures of each step(Shown in class). But this is not an efficient way. 
+
+There are two steps of the Mathematical Induction method. We can easily use Mathematical Induction to show that the recursive algorithm f is correct.
+\begin{enumerate}
+  \item prove f is correct for smallest input size.
+  \item if f is correct for input size $0,1,2, \cdots, k$ then f is correct for input size $k+1$.
+\end{enumerate}
+
+\noindent
+To prove the first algorithm is correct,
+\begin{enumerate}
+  \item First we show that, Bubble Sort is correct with array size equal to 1.
+  \item Then we assume Bubble Sort is correct with array size equal to $1, 2, 3, \cdots, k$ when $n$ equals to $k+1$, we can move the
+  smallest element in the array to $A[1]$ and the last will be sorted correctly with the assumption that Bubble Sort is working with input size $k$.
+\end{enumerate}
+
+So we got procedures to prove recursive version of bubble sort is correct. With the iterative function, we can get the loop invariant first, then use the Mathematical Induction to prove the correctness of the loop invariant.
+
+\begin{enumerate}
+  \item The loop invariant is: In $ith$ loop, the first $i$ elements will be sorted correct.
+  \item We show that, in the first iteration, the smallest element will be put into A[1], so it is correct for the smallest $i$.
+  \item Then we assume it is correct with $i$ equal to $1, 2, 3, \cdots, k$. When $i$ equals to $k+1$, we will move the $k+1th$smallest number to $A[k+1]$, then $A[1] to A[k+1]$ is sorted as $A[1] to A[k]$ is sorted with the assumption and $A[k+1]$ is greater than $A[k]$
+\end{enumerate}
+
+\medskip
+
+\bibliographystyle{abbrv}
+\bibliography{reference}
+
+\end{document}
+
+

@@ -1,0 +1,59 @@
+\documentclass[usletter]{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{scribe}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+\begin{document}
+
+\makeheader{Minsheng}                              % your name
+           {January 30, 2015}                          % lecture date
+           {4}                                       % lecture number
+           {Coping with NP completeness}  % lecture title
+
+\noindent
+In this lecture, we go through two different problems of NP complete problem. The one we previous had in last lecture the Maximum Independent Set is also a NP completeness problem.
+
+\section{Satisfiability Problem}
+Boolean Satisfiability Problem is the problem of determining if there exists an interpretation that satisfies a given Boolean formula.  For example,  we had ${X_{1}}$, ${X_{2}}$, ${X_{3}}$. What we want is to figure out, whether there is an combination of these three variables so that we can get the fomular to be true. 
+$\varphi$ = $(X_{1}\vee \overline{X_{2}}\vee X_{3}) \wedge (X_{1}\vee \overline{X_{2}}\vee \overline{X_{3}}) \wedge(X_{1}\vee {X_{2}}) \wedge(\overline{X_{1}}\vee X_{2} \vee X_{3}) \wedge (\overline{X_{1}}\vee \overline{X_{2}}\vee X_{3})$
+
+The Satisfiability problem is called 3SAT problem if each clauses in the boolean formula contains at most 3 variables. So this example is actually 3SAT problem as in each clauses, there are at most 3 variables. SAT was the first known NP-complete problem.
+
+Still, we solve the 3SAT problem by recusively calling functions. For each clause, there are 4 possiblems, empty, 1 variable, 2 varialbes and three variables. For example, if there is only one variable in the clause, then to make the whole formular true, we need that clause to be true. Then that variable should be true. So after that, we can have all the clauses which aslo have the same variable to be true. In this way, we have reduced the size of the clauses. 
+\begin{algorithm}
+\caption{3SAT}
+\begin{algorithmic}[1]
+\Procedure{3SAT}{$\varphi$}
+\State Look at largest clause $\varphi_{1}$
+\If {$\varphi_{1}$ is empty} 
+	\Return True
+\EndIf
+\If {$\varphi_{1}$ = a}
+	\Return \Call{3SAT}{$\varphi_{(a=true)}$}
+\EndIf
+\If {$\varphi_{1}$ = a $\vee$ b}
+	\Return \Call{3SAT}{$\varphi_{(a=true)}$} or \Call{3SAT}{$\varphi_{(a=false, b=true)}$}
+\EndIf
+\If {$\varphi_{1}$ = a $\vee$ b $\vee$ c}
+	\Return \Call{3SAT}{$\varphi_{(a=true)}$} or \Call{3SAT}{$\varphi_{(a=false, b=true)}$} or \Call{3SAT}{$\varphi_{(a=false, b=false, c=true)}$}
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+Still, we can assume T(n) = $X^n$ is the running time of 3SAT on n variables as we think this is a NPC problem and has the time expenantial time complexity. So T(n) = T(n-1) + T(n-2) + T(n-3). After that we get $X^3$ = $X^2$ + $X$ + 1. Then at last we can get that X $\approx$ 1.84 using Newton's method.
+
+\section{Vertex Cover}
+A vertex cover of an undirected graph is a subset of its vertices such that for every edge (u, v) of the graph, either ‘u’ or ‘v’ is in vertex cover. Although the name is Vertex Cover, the set covers all edges of the given graph. Given an undirected graph, the vertex cover problem is to find minimum size vertex cover.
+
+Also, we have discussed the potential solution for the Vertex Cover problem. Like 3SAT, choose a Vertex first, then solve the problem by recursively calling the functions. And we will discuss the detailed solution in the next lecture.
+\bibliographystyle{abbrv}
+\bibliography{reference}
+
+\end{document}

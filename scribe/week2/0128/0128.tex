@@ -1,0 +1,80 @@
+\documentclass[usletter]{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{scribe}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+\begin{document}
+
+\makeheader{Minsheng Zhang}                              % your name
+           {January 28, 2015}                          % lecture date
+           {3}                                       % lecture number
+           {Running time complexity and the Master's theorem}  % lecture title
+
+\noindent
+In this lecture, first we went through the materials we had in the lecture 2. And we reviewed the algorithm of using divide and conquer to solve the maximum subarray problem. We got the pseudo code for this algorithm. After that, we use Dynamic Programming to solve the maximum subarray problem and we got time complexity of O(n) which is better than the O(logn) using divide and conquer.
+
+After that we had an exmaple of Max Independent Set, we figured out the algorithm to solve the problem and got the pseudo code of the algorithm.
+
+At last, we get the method to use mathmatics induction to calculate the time complexity of an algorithm and we used this method to show the time complexity of our algorithm for tha Max Independent Set. We got that our solution is better than the brute force method even though the time complexity is still exponential.
+
+\section{Maximum Subarray}
+In the previsou lecture, we had the Maximum Subarray problem and we have shown that we can use brute force to solve the problem which gives the time complexity $O(n^2)$. After that, we tried to figure out to use divide and conquer method to solve the problem. In this lecture, we go through details about how to solve the problem using this method. Pseudo code of this algorithm is given in the scribe of lecture 2.
+
+After that, we tried to solve the problem using linear time. 
+\begin{enumerate}
+	\item This is a Dynamic Programming problem
+	\item Let f[i] denote the the maximum subarray value of the substring ending at i-th element, so the transformation function si: $f[i] = f[i-1]>0 ? f[i-1]+A[i] : A[i]$
+	\item Like breadth first search state compress can be used because only the most previous one result is used. So actually, we can use O(1) space complexity to solve the problem which is better than O(n) space complexity algorithm given in the class.
+\end{enumerate}
+
+\begin{algorithm}
+\caption{maxSubArray}
+\begin{algorithmic}[1]
+\Procedure{maxSubArray}{A, n}
+\State $result=INT_MIN,f=0$
+\For${i = 0 to n}$
+		\State $f=f>0?f+A[i]:f[i];$
+		\State $result=\Call {max}(result,f);$
+\EndFor
+\State $return result$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\section{Max Independent Set}
+Then, we had the Max Independent Set problem. An independent set is a subset of V(vertices) that are mutually not connected. Of course, we can use brute force algorithm to go through all the possibilities of the different combinations of the V. Every vertice will have two possiblity, 1 in the set or 0 no in the set. So there are $2^n$ possibilities and the time complexity would be $O(2^n)$. After going through all the possibilities, we can get the Max Independent Set.
+
+In this problem, we use divide and conquer method. As all the vertice there are two states. We can get the Max Independent Set by comparing when V is in the set or V is not in the set.
+
+\begin{algorithm}
+\caption{LIS}
+\begin{algorithmic}[2]
+\Procedure{LIS}{G}
+\If {$E_{G}$ $ is$ $ empty$}
+	\Return $|V|$
+\EndIf
+\State $G_{1} = G-{V_{1}}$
+\State $G_{2} = G-{V_{1}}-N(V_{1})$
+\Return \Call{max}{$LIS(G_{1}),LIS(G_{2})+{V_{1}}$}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+So in this algorithm, there are two sub problems, the first sub problem has the size n-1. and the second sub problem has the size n-2 at most.
+Then we have T(n) = T(n-1) + T(n-2) $\le$ 2*T(n-1). Using substitution, T(n) is $O(2^n)$ which is still an exponential problem.
+
+\section{Mathematics Induction for Time Complexity}
+At last, we tried to figure out time complexity of an algorithm by using mathematics induction. We assume the answer is $O(x^n)$ of the Max Independent Set algorithm. 
+Then $x^n = x^{n-1} + x^{n-2}$. Then we get $x^2 = x + 1$. Of course, this equation has two solutions but we only want the positive one which is about 1.62. So we can show that our solution using the divide and conquer is better than the brute force solution.
+
+
+\bibliographystyle{abbrv}
+\bibliography{reference}
+
+\end{document}

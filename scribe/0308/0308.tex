@@ -1,0 +1,89 @@
+\documentclass[usletter]{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{scribe}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{float}
+\usepackage[noend]{algpseudocode}
+
+\begin{document}
+
+\makeheader{Minsheng Zhang}                              % your name
+           {March 08, 2015}                          % lecture date
+           {8}                                       % lecture number
+           {Approximation Algorithm}  % lecture title
+
+\noindent
+In this week, we learn the approximation algorithms for NP-hard problem. We have two specific examples, one is travelling salesman problem and the other is the integer linear programming.
+
+\section{Travelling salesman problem}
+First, in order to learn about what the travelling salesman problem is. We review the Hamilton cycle problem.
+\begin{enumerate}
+	\item Input: undirected graph G.
+	\item output: Yes, if there's a cycle that go through all vertices. No, otherwise.
+\end{enumerate}
+
+Then, we talk about NP-hard problems. NP-hard (Non-deterministic Polynomial-time hard), in computational complexity theory, is a class of problems that are, informally, $"$ at least as hard as the hardest problems in NP$"$. That is all the NP problems can be reduced to HP-hard problems. 
+
+The travelling salesman problem (TSP) asks the following question: Given a list of cities and the distances between each pair of cities, what is the shortest possible route that visits each city exactly once and returns to the origin city? It is an NP-hard problem in combinatorial optimization.  We can reudce Hamilton cycle to the TSP problem. We can think every link in the Ham problem has a weight 1. Then this problem can be converted to TSP problem, that's find a cycle/tour with minimum weight. 
+
+We discussed two different approximation scenarios for TSP. One is TSP with Euclidean metric and the other is the general TSP. We conclude that TSP with Euclidean metric has has 2OPT approximation and the TSP in general is hard to approximate within constant factor.
+
+\subsection{TSP with Euclidean metric}
+If the TSP has Euclidean metric, then it has has 2OPT approximation the Euclidean metric. The Euclidean metric is:
+\begin{enumerate}
+	\item d(x, y) $\ge$ 0;
+	\item d(x, y) = d(y, x);
+	\item d(x, y) + d(y, z) > d(x, z).
+\end{enumerate}
+
+We use the minimum spanning tree structure to get the approximation results. We think the sum weights of the minimum spanning tree as the approximation results.  
+\begin{enumerate}
+	\item Construct a minimum spanning tree MST for graph G. Then the sum weights of the MST is less than solution of TSP, as if the optimization solution of TSP is less than the MST, then the solution would be the MST. So we have MST $\le$ OPT.
+	\item Then we have shown SOL $\le$ 2MST. Let's consider that we can go each link as many times as we want. Then 2MST is a solution for the TSP problem. But we only need to go once of each link and if there is a triangle abc. Then if ab and ac are in the MST solution, then of course ab plus ac is greater than bc. So in this way if bc is in the TSP solution, then of course SOL $\le$ 2MST.
+	\item As we have shown in the above two statements, then we have SOL $\le$ 2MST $\le$ 2OPT
+\end{enumerate}
+
+\subsection{TSP in generate}
+To prove that is hard to approximate within constant factor, we need reduce Hamiltonian cycle to it. 
+
+Define d(u, v) = $\lbrace \begin{array}{lcr}
+1 $ if (u,v) $\in$ G. $\\ kn + 1 $ else$
+\end{array}$
+
+If G has a Hamiltonian cycle, so $OPT_{TSP}$ in G' is n.
+If G doesn't have a Hamiltonian cycle, $OPT_{TSP}$ > kn + 1 + n - 1 = (k + 1)n.
+If A is k-OPT algorithm for TSP, create G' from G, then run A(G). Then we can decide Ham(G) using the result A(G') by
+\begin{enumerate}
+ \item If G has a Hamiltonian cycle, $SOL_{A}$ $\le$ kn;
+ \item If G doesn't have a Hamiltonian cycle, (k+1)n $\le$ OPT $\le$ $SOL_{A}$, kn < (k+1)n $\le$ $SOL_{A}$.
+\end{enumerate}
+
+Then if A can be solved in polynomial time, then Ham can be solved in polynomial time, so NP will be equal to P. We don't know that P is equal to NP or not.  So, right now, we can get the conclusion TSP is hard to approximate within a constant factor.
+
+\section{Integer Linear programming}
+Then we learn about that the Integer Linear programming is NP-hard problem. We reduce the Vetex Cover problem to it.
+We learn that LP is the lower bound for ILP. 
+
+The objective function of the VC is to minimize $\sum{x_{i}}$ with n vertices and m edges. 
+\begin{enumerate}
+	\item The ILP is: For each edge (i,j) in graph G, $x_{i}$ + $x_{j}$ $\ge$ 1, $x_{i}$ $\in$ {0, 1}.
+ 	\item The LP is: For each edge (i,j) in graph G, $x_{i}$ + $x_{j}$ $\ge$ 1, 0 $\le$ $x_{i}$ $\le$ 1.
+\end{enumerate}
+
+Then we have $OPT_{LP} \le OPT_{ILP}$, because the solution for ILP is a subset of LP. 
+We use a rouding program to show the approximation for the ILP using LP's result. Suppose we have got the optimization solution for LP. 
+Let $\overline{x_{i}}$=0.5 if $x_{i} \ge 0.5$ or $\overline{x_{i}}$=0 o.w. Let $x^*_{i}$ the variables in the LP.
+
+If (i,j) $\in$ E, then $\overline{x_{i}}+\overline{x_{y}} \ge 1$. We can get $x^*_{i}+x^*_{j} \ge 1$, because at least one of $x^*_{i}$ is greate than 0.5.
+Then we can get $\overline{x_{i}}$ $\le$ 2*$x_{i}^*$, $OPT_{ILP}$ $\le$ $\sum{\overline{x_{i}}}$ $\le$ 2*$OPT_{ILP}$.
+
+
+\bibliographystyle{abbrv}
+\bibliography{0308}
+
+\end{document}

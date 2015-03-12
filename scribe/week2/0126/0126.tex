@@ -1,0 +1,110 @@
+\documentclass[usletter]{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{scribe}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+\begin{document}
+
+
+\makeheader{Minsheng Zhang}                              % your name
+           {January 26, 2015}                          % lecture date
+           {2}                                       % lecture number
+           {Running Time complexity and the Master's theorem}  % lecture title
+
+\noindent
+In this lecture, first we reviewed the materials we had in the previous lecture. We learned that reduction contains self reduction and transformation. Also we have shown in order to prove the correctness of an algorithm we can use mathmatics induction.
+
+Then, we had more exmaples about reduction and reviewed how to compute the time complexity of an algorithm. We had three examples in this lecture, binary seach, quicksort and maximum subarray.
+
+\section{Algorithm exmaples}
+Binary tree is an exmaple of self reduction, we can solve the problem by recursing function calls.
+\begin{algorithm}
+\caption{BinSearch}
+\begin{algorithmic}[1]
+\Procedure{BinSearch}{A,L,R,x}
+\If {$L > R$}
+	\Return $-1$
+\EndIf
+\State $m = (L+R)/2$
+\If {$A[m]=x$}
+	\Return $m$
+\EndIf
+\If {$A[m]<x$}
+	\Return \Call {BinSearch}{A,m+1,R,x}
+\EndIf
+\Return \Call {BinSearch}{A,L,m-1,x}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+We can use T(n) to denote the time complexity of binary seach algorithm where n is the size of the input. The comparison steps use constant steps and in the algorithm we will have at most one recursive call with the size of $n/2$. So we can get the formular that: $T(n) = C + T(n/2)$ for $n > 1$. Using substition or master's theorem, we can get the time complexity of the algorithm is $O(logn)$.
+
+Quicksort is another example of self reductin, the same as binary seach, we can solve the problem by recursing function calls.
+\begin{algorithm}
+\caption{QuickSort}
+\begin{algorithmic}[1]
+\Procedure{QuickSort}{A, L, R}
+\If {$L < R$}
+	\State $P = \Call {Partition}{A, L, R}$
+	\State $\Call{QuickSort}{A, L, P-1}$
+	\State $\Call{QuickSort}{A, P+1, R}$
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+The $Partition$ function has the time complexity of O(n) where n is the size of input. Still we assume T(n) is the time complexity of quicksort. As long as we can choose the pivot p in a good way such as using the median of three(first, middle and last), then we can get $T(n)=2*T(n/2)+cn.$ Use the master's theorem, we can get the time complexity of quicksort is $O(nlogn)$. Here in the worst case of the algorithm, T(n) would be equal to $O(n^2)$.
+
+The third exmaple is the Maximum subarray. Given an array A, find the subarray which gives the largest sum.
+Of course, we can solve the problem using brute force, then the time complexity would be $O(n^2)$ as we need to compute all the possibilites. Then we had a divide and conquer algorithm to minimize the time complexity to $O(nlogn)$.
+\begin{algorithm}
+\caption{Maximum Subarray}
+\begin{algorithmic}[1]
+\Procedure{MaximumSubarray}{A, L, R}
+\If {$L > R$}
+	\State $mid = (L+R)/2$
+	\State $P_{1} = $\Call{MaximumSubarray}{A,L,mid-1}
+	\State $P_{2} = $\Call{MaximumSubarray}{A,mid,R}
+	\State $S = A[mid-1]$
+	\State $P_{3} = S$
+	\For{\texttt{i = mid-2 to L}
+		\State $S+ = A[i]$
+		\State $P_{3} = \Call {max}(S, P_{3})$
+	\EndFor
+	\State $S = A[mid]$
+	\State $P_{4} = S$
+	\For{\texttt{i = mid+1 to R}}}
+		\State $S+ = A[i]$
+		\State $P_{4} = \Call {max}(S, P_{4})$
+	\EndFor
+	\Return \Call {max}{$P_{1},P_{2},P_{3}+P_{4}$}
+\EndIf
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\section{Time Complexity}
+The Master's Theorem ~\cite{DPV} concerns recurrence relations of the form:
+T(n) = aT(n/b) + $n^d$ where a $\ge$ 1, b $>$ 1.
+And to get the T(n), we have:
+\begin{enumerate}
+  \item If $\log_b{a} = d$, $T(n) = O(n^d \log{n})$.
+  \item If $\log_b{a} \neq d$, $T(n) = O((n^{max(\log_b{a}, d)}))$
+\end{enumerate}
+Also, we reviewed the concepts of the $\Omega$(n) and $\Theta$(n).
+\begin{enumerate}
+   \item If T(n) $\le$ c*g(n) for a give N where n $\ge$ $N$, T(n) $\in$ O(g(n)) .
+   \item If T(n) $\ge$ c*g(n) for a give N where when n $\ge$ $N$, T(n) $\in \Omega$(g(n)) .
+   \item If T(n) $\in$ O(g(n)) $\&$ $\Omega$(g(n)), T(n) $\in \Theta(n)$.
+\end{enumerate}
+
+\bibliographystyle{abbrv}
+\bibliography{reference}
+
+\end{document}
