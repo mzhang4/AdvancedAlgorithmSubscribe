@@ -1,0 +1,143 @@
+\documentclass[usletter]{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{scribe}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{float}
+\usepackage[noend]{algpseudocode}
+
+\begin{document}
+
+\makeheader{Minsheng Zhang}                              % your name
+           {April 12, 2015}                          % lecture date
+           {12}                                       % lecture number
+           {Approximation algorithm}  % lecture title
+
+\noindent
+In this week, we talked about two NP-hard problems. One is the set cover problem and the other is the job scheduling problem. First, we talked about the approximation algorithms for set cover problem. At for the last lecture, we have learned concepts about the job scheduling problem.
+
+\section{Dual Approximation Algorithm for Set Cover}
+The set cover problem is: Given a set of elements E = \{$e_{1}$, ... ,$e_{n}$\} and a set of m elements of E, S = \{$s_{1}$, ... ,$s_{m}$\}, find a “least cost” collection C of sets from S such that C covers all elements in E.
+
+There are two versions of set cover problem, one is the weighted and the other is the unweighted. In the unweighted set cover, we can consider the cost of the set as 1. In the weighted set cover, each set will have a specific cost.
+
+We use the same example of the previous class.
+E = \{1, 2, 3, 4, 5, 6\}, $S_{1}$ = \{1, 2, 3\}, $w_{1}$ = 5, $S_{2}$ = \{2, 4, 5\}, $w_{2}$ = 2,  $S_{3}$ = \{3, 4\}, $w_{3}$ = 3, $S_{4}$ = \{1, 5, 6\}, $w_{4}$ = 4,  $S_{5}$ = \{4, 5, 6\}, $w_{5}$ = 10. The LP version for this problem is minimize 5$x_{1}$ + 2$x_{2}$ + 3$x_{3}$ + 4$x_{4}$ + 10$x_{5}$ with the constraits $\left[
+\begin{array}{c}
+1 0 0 1 0 \\
+1 1 0 0 0 \\
+1 0 1 0 0 \\
+0 1 1 0 1 \\
+0 1 0 1 1 \\
+0 0 0 1 1 \\
+\end{array}
+\right]$ * $\left[
+\begin{array}{c}
+x_{1} \\
+x_{2} \\
+x_{3} \\
+x_{4} \\
+x_{5} \\
+\end{array}
+\right]$
+
+Then we can get the dual of the problem. The objective functino should be to maximize $y_{1}$ + $y_{2}$ + $y_{3}$ + $y_{4}$ + $y_{5}$ + $y_{6}$, and the constraints are $\left[
+\begin{array}{c}
+111000 \\
+010110 \\
+001100 \\
+100011 \\
+000111 \\
+\end{array}
+\right]$ * $\left[
+\begin{array}{c}
+y_{1} \\
+y_{2} \\
+y_{3} \\
+y_{4} \\
+y_{5} \\
+y_{6} \\
+\end{array}
+\right]$ = $\left[
+\begin{array}{c}
+5 \\
+2 \\
+3 \\
+4 \\
+10 \\
+\end{array}
+\right]$
+
+So we have $\sum_{i = 1}^n y_{i}^*$ = $\sum_{j = 1}^m w_{j}x_{j}^*$ $\le$ OPT.
+After that we will selecte sets which satisfies:  \{$S_{j}$ :  $\sum_{e_{i} \in S_{j}} y_{i}^*$ = $w_j$\}. We can prove that all $e_i$ will be covered by contradiction. If $e_i$ is not selected by any of the sets. Then we can choose the constraints which has $e_i$ and add it up until the constraints satisfy the condition. Then the obejctive result would increase which is contradicted to the problem statement that we will find the Max LP result. So all the $e_i$ are covered. So the sets we select is a set cover solution.
+
+Our objective is: $\sum_{j \in J} w_j$ = $\sum_{j \in J} \sum_{e_{i} \in S_{j}} y_{i}^*$ = $\sum_{i = 1}^n \sum_{e_{i} \in S_{j}, j \in J} y_{i}^*$ $\le$ $\sum_{i = 1}^n f_iy_{i}^*$ $\le$ f$\sum_{i = 1}^n y_{i}^*$.
+Where $f_i$ is number of sets containing $e_i$, and f = max\{$f_i$\}.
+
+This is a F-approximation. In general, however, there could be some element contained in every set of S and this would be a poor approximation. So after that we learn the greedy strategy which is a $\ln{n}-approximation$.
+
+\section{Greedy for set cover}
+Then we talked about the greedy algorithm for the set cover problem. First we just consider the unweighted set cover problem.
+\begin{algorithm}
+\caption{Greedy set cover Unweighted}
+\begin{algorithmic}[1]
+\While {$e_{i}$ not covered} 
+	\State Select the largest set containing uncovered items
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+To get the upper bound of the algorithm, let $k = OPT$, and let $E_{t}$ be the set of elements not yet covered after step i, with $E_{0}$ = E. OPT covers every $E_{t}$ with no more than k sets. Algorithm 1 always picks the largest set over $E_{t}$ in step $t+1$. The size of this largest set must cover at least $|E_{t}|/k$ in $E_{t}$ based on the penguin hole theorem. So we have $|E_{t}+1| < |E_{t}| - |E_{t}|/k$. And inductively we have $|E_{t}| < n(1-1/k)^t$.
+So when $|E_{t}| < 1$, we have $(1-1/k)^t < 1/n$, So we have $t \le k\ln{n}$ which is equal to $OPT*\ln{n}$. Then we have $\sum{W_J}/OPT \le \ln{n}$, thus we have $\sum{W_j} \le \ln{n}*OPT$.
+
+For the weighted version of set cover, we can use the algorithm:
+\begin{algorithm}
+\caption{Greedy set cover Weighted}
+\begin{algorithmic}[1]
+\While {$e_{i}$ not covered} 
+	\State Select $min \frac{W_{j}}{|S_{j}|}$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+Using the same proof as the unweighted version, we have $|some S_{j} set| \ge \frac{n_{t}*W_{j}}{OPT}$, then we have $n_{t+1} \le n_{t} - \frac{n_{t}*W_{j}}{OPT}$. Inductively, we have $e^{\sum{W_j}/OPT} \le n$
+ 
+\section{Job Scheduling Problem}
+Then we start talking about the job scheduling problem. The problem we talked about is the one machine job scheduling. Given N jobs and 1 machine with single core. We have the below property of the job:
+\begin{enumerate}
+	\item Serial: The machine can only process one job at one time.
+	\item Non-preemptive: One job starts, it has to finish, then run other.
+	\item Work load: the job j take $P_{j}$ time wait. ($P_{j} > 0$)
+	\item Ready to run: every job has a due data $d_{j}$. $j = 1, 2, ..., n$
+	\item Release data: job can not run before $r_{j}$. ($r_{j} > 0$)
+	\item Finish data: the schedule time $c_{j}$ of job j. 
+\end{enumerate}
+
+After that, we assume that the schedule starts at time 0. We define lateness as: $L_{j} = c_{j} - d{j}$. 
+The question here is to minimize the Maximal lateness which is $min{max{L_{j}}}$.
+
+The problem is a optimization problem and NP-hard. The decision version of the problem is to decide if we can finish all jobs before deadline which means all $L{j} <= 0$. Also this problem is a NPC problem.
+The due data can be earlier than the release data and we do not care whether meet the deadline. We only want to finish it as soon as possible.
+
+For example, we have three jobs to schedule and their properties are:
+\begin{enumerate}
+	\item job1, $P_{1} = 2, r_{1} = 0, d_{1} = -1$,
+	\item job2, $P_{2} = 1, r_{2} = 2, d_{2} = 1$,
+	\item job3, $P_{3} = 4, r_{3} = 1, d_{3} = 10$. 
+\end{enumerate}
+
+If we schedule these jobs are job1, job2 and job3, then job1 will be finished at time 2, job2 will be finished at time 3, and job3 at time 7.
+
+Then we learned the theorem that A $\beta$-approximation algorithm does not exist. Assume we have a $\beta$-approximation algorithm, for case $L_{j} = 0$, pick an instance that solution for the approximation is 0. We have $OPT \le \beta*APT = 0$, then we have $OPT = 0$. Thus we can decide if we can find all jobs before the deadline or not in polynomial time.
+
+But if we have restriction that $d_{j} < 0$, then we have a $\beta = 2 approximation algorithm.$
+The basic idea of the algorithm is when not all jobs are finished, if the machine is free to run, we take the available job with the earliest due date to run.
+
+\bibliographystyle{abbrv}
+\bibliography{0412}
+
+\end{document}
