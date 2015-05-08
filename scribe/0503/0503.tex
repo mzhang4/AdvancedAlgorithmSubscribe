@@ -1,0 +1,70 @@
+\documentclass[usletter]{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{scribe}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{float}
+\usepackage[noend]{algpseudocode}
+
+\begin{document}
+
+\makeheader{Minsheng Zhang}                              % your name
+           {April 26, 2015}                          % lecture date
+           {15}                                       % lecture number
+           {Primal dual approximation algorithm}  % lecture title
+
+\noindent
+In this week, we talked about two different problems and had the final exam. First we introduced the Generalized Steiner tree problem and then learned about the minimum knapsack problem.
+
+\section{Generalized Steiner tree}
+In this problem, we are given an undirected graph G = (V, E), non-negative costs $c_e$ ≥ 0 for all edges e $\in$ E, and k pairs of vertices $s_i$, $t_ \in V$. The goal is to find a minimum-cost subset of edges F $\in$ E such that every $s_i-t_i$ pair is connected in the set of selected edges; that is, $s_i$ and $t_i$ are connected in (V, F ) for all i.
+
+Let $S_i$ be the subsets of vertices separating $s_i$ and $t_i$(s-t cuts, the same as the s-t cuts discussed in last week); that is, $S_i = {S \in V : |S \cap {s_i,t_i}| = 1}$. Then we can model this problem with the following integer program: $\min{\sum_{e \in E}{c_e * X_e}}$, and the constraint is $\sum_{e \in \delta(S)}{x_e} \ge 1$. Here $x_e = \{0 ,1\}$. 
+
+This set of constraints means that we must select one edge from $\delta(S)$ from each $s_i-t_i$ cut.
+
+Given the linear programming relaxation by replacing $x_e = \{0 ,1\} $ with $x_e \ge 0$, the dual of this linear program is $max{\sum{s \subseteq V:\exists{i}, S \in S_i}{yS}}$ and the constraint is $\sum_{S: e \in \delta(S)}{yS \le c_e}$
+
+\section{Minimum knapsack}
+In this problem,  we talked about the minimization version of the knapsack problem.  Here, we are given a set I of n items,
+I = $\{1, 2, . . . , n\}$. Each item has a value $v_i$ and a size $s_i$. we are given a demand D, and the goal of the problem is to find a subset of items having minimum total size such that the total value is at least the demand. That is, we try to find a subset X $\in$ I of items minimizing s(X) = $\sum{s_i}$  and the constraint is $\sum_{i \in I}{v_i*x_i} \ge D$. Here $x_i = \{0,1\}$ means whether is in the solution set or not.
+
+After that, we can relax the problem to the linear programming problem by replacing  $x_i = \{0,1\}$ with $x_i \ge 0$. But here we can see that there is a big gap between the linear programming version and the integer programming version.  Consider a two-item set I=$\{1,2\}$,where $v_1$ =D−1,$v_2$ =D, $s_1$ =0 and $s_2$ =1. The only integer solutions require us to take item 2 for a total size of 1. But in the linear programming version, we can have $x_1 = 1 and x_2 = 1/D$ with the size of 1/D. This shows that the integrality gap of this formulation is at least 1/(1/D) = D.
+
+So to get a reasonable performance, we need another formulation for the same problem, here we will get a couple of constraints which are equal to the constraints in the first 1. Consider after we pick item A from I, then we should to have $\sum_{i \in I-A}{v_i^A * x_i} \ge D_A$ where $D_A$ equals to D-value of A. So after that we can get another formulation of the same problem, we keep the objection function the same but we change the constraints: $\sum_{i \in I-A}{v_i^A * x_i} \ge D_A$ where $\forall{A} \subseteq I$.
+
+The same as other primal-dual methods we learned earlier, we will relax the problem to the linear programming by replacing $x_i = \{0, 1\}$ with $x_i \ge 0$. After that we can get the dual of the problem. The objective function is: $\max{\sum_{A: A \subseteq I}D_A * y_A}$ and the constraint is: $\sum_{A \subseteq{I}: i \notin A} v_i^A*y_A \le s_i$, $\forall{i} \in I$. Here $y_A \ge 0$ is the variable in the dual problem.
+
+The same we will use the greedy algorithm to solve the dual of the problem and get the feasible solution for the original problem. 
+
+
+\begin{algorithm}
+\caption{Greedy algorithm for minimum knapsack}
+\begin{algorithmic}[1]
+\State y $\leftarrow$ 0
+\State A $\leftarrow$  $\emptyset$
+\While {v(A) < D do} 
+	\State Increase $y_A$ until for some i $\in$ I - A, $\sum_{B \subseteq I: i \notin B}{v_i^B*y_B} = s_i$
+	\State A $\leftarrow$ A $\cup$ $\{i\}$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+After that, we showed that the algorithm is a 2-approximation algorithm for the minimum knapsack problem.
+
+Let l be the solution got  from the algorithm, and let X be the set of items returned at the end of the algorithm. We know that v(X) $\ge$ D; since item l was added to X, it must be the case that before l was added, the total value of the set of items was less than D, so that v(X − l) < D. Also in any iteration of the algorithm except the last one, adding the next item i to the current set of items A did not cause the value of the knapsack to become at least D; that is, vi < D−v(A) = DA at that point in the algorithm. So we can get $\sum_{i \in X-A}{v_i^A} = v_l^A + v(X-l) -V(A)$. 
+
+First we have  $v_i^A \le D_A$ by definition, and we also have  v(X − l) < D so that v(X − l) − v(A) < D − v(A) = DA; thus we have that $v_l^A + v(X-l) -V(A) < 2D_A$.
+
+ Thus we can have that $\sum_{i \in X}{s_i}  = \sum_{A \subseteq I}{y_A} * \sum_{i \in X-A}{v_i^A} < 2* \sum_{A: A \subseteq I} D_A*y_A \le 2*OPT$.
+ 
+ Thus, we get that this algorithm is a 2-approximation algorithm. 
+
+\bibliographystyle{abbrv}
+\bibliography{0503}
+
+\end{document}

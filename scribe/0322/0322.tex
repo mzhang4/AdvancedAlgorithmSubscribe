@@ -1,0 +1,57 @@
+\documentclass[usletter]{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{scribe}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+\begin{document}
+
+
+\makeheader{Minsheng Zhang}                              % your name
+           {March 22, 2015}                          % lecture date
+           {9}                                       % lecture number
+           {Approximation algorithm}  % lecture title
+
+\noindent
+This week we introduce the approximation algorithm for bin packing problem and graph coloring problem. Espicially for the graph coloring problem, we will show that find a general approximation factor for it is still a difficult problem.
+
+\section{Bin Backing}
+In the bin-packing problem, we are given n pieces (or items) with specified sizes a1, a2, . . . , an, such that
+$1 > a1 \ge a2 \ge ···\ge an >0$;
+we wish to pack the pieces into bins, where each bin can hold any subset of pieces of total size at most 1, so as to minimize the number of bins used.
+The bin-packing problem is related to a decision problem called the partition problem. In
+the partition problem, we are given n positive integers b1, . . . , bn whose sum B = $\sum{ni}$=1 $b_i$ is
+even, and we wish to know if we can partition the set of indices {1,...,n} into sets S and T. The partition problem is well known to be NP-complete. Notice i $\in$ S i $\in$ T
+that we can reduce this problem to a bin-packing problem by setting ai = 2bi/B and checking whether we can pack all the pieces into two bins or not.
+
+After that we introduced the next fit algorithm.
+The Next Fit algorithm works as follows: Initially all bins are empty and we start with bin j = 1 and item i = 1. If bin j has residual capacity for item i, assign item i to bin j, i.e., a(i) = j, and consider item i + 1. Otherwise consider bin j + 1 and item i. Repeat until item n is assigned. This algorithm is a 2-approximation algorithm.
+
+Let k be the number of non-empty bins in the assignment a found by Next Fit. Let $k_*$ be the optimal number of bins. We show the slightly stronger statement that
+k $\le$ 2$k_*$ − 1.
+Firstly we observe the lower bound $k^* \ge$⌈s(I)⌉. Secondly, for bins j = 1,...,⌊k/2⌋ we
+have
+Adding these inequalities we get $⌊k/2⌋ < S(I)$
+
+￼Since the left hand side is an integer we have that (k−1)/2 $\le$ ⌊k/2⌋ $\le$⌈s(I)⌉−1.
+This proves k $\le$ 2 ·⌈s(I)⌉ − 1 $\le$ 2 · $k^*$ − 1 and hence the claim.
+The analysis is tight for the algorithm, which can be seen with the following instance with2nitems. Forsomeε>0, let $s_{2i−1} =2·ε,s_{2i} =1−ε$ for i=1,...,n.
+
+\section{Graph Coloring}
+Graph coloring is a typical NP-complete problem. This class we will try to approximate this problem using a greedy algorithm. \\
+The basic idea is that for each vertex, we pick the lowest available color C and assign to this vertex. We have a following theorem:\\
+
+\begin{theorem}
+If every node in graph G has at most d degrees, then the greedy algo was at most (d+1) colors.
+\end{theorem}
+We can prove it using mathmatics induction.\\
+
+\bibliographystyle{abbrv}
+\bibliography{template}
+
+\end{document}

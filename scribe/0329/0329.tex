@@ -1,0 +1,81 @@
+\documentclass[usletter]{article}
+\usepackage{graphicx}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{amsmath}
+\usepackage{scribe}
+\usepackage[margin=1.5in]{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage[noend]{algpseudocode}
+
+\begin{document}
+
+
+\makeheader{Minsheng Zhang}                              % your name
+           {March 29, 2015}                          % lecture date
+           {10}                                       % lecture number
+           {Vertex Cover Approximation}  % lecture title
+
+\noindent
+In this week, we learned two approximation algorithms for vertex cover problem. One is the rounding algorithm and the other is the primal-dual method. 
+\section{Vertex Cover}
+Given a G = (V, E), find a minimum subset C $\subseteq$ V , such that C “covers” all edges in E, i.e., every edge $\in$ E is incident to at least one vertex in C. After that, we can convert the vertex cover problem to Integer programming problem. Let $X_{i} = \{0, 1\}$ denote whether the vertex $v_{i}$ is in the set C or not.
+And we can get the constraint:  $\sum_{j: e_j \in S_j}{x_i} \ge 1$.
+
+And we can make $X_{i} \ge 0$ which relaxes the Integer programming problem to the linear programming problem. And our two approximation algorithms are based on the linear programming version of the problem.
+
+\section{randomized rounding algorithm}
+This algorithm will solve a linear programming relaxation for the set cover problem. And then round the fractional solution to an integral solution. The algorithm will do so randomly using a technique called randomized rounding. We would like to round fractional values of $x^*$ to either 0 or 1 in such a way that we obtain a solution $x$ to the integer programming formulation of the set cover problem without increasing the cost too much. The central idea of randomized rounding is that we interpret the fractional value $x_j^*$ as the probability that $x_j$ should be set to 1. Thus, each subset $S_j$ is included in our solution with probability $x^*_j$.
+
+Let z be an optimal solution for the LP. In each iteration, for each set E we let $z_i$ = 1 with probability $x^*_i$. Then we have an increase in objective value in each iteration.
+We estimate the probability that an element $e_i$ $\in$ E is covered in one iteration. Let $e_i$ be contained in k sets and let z1, . . . , zk be the probabilities given in the solution z. Since u is fractionally covered we have z1 + · · · + zk ≥ 1. With easy but tedious calculus we see that – under this condition – the probability for $e_i$ being covered is minimized when the $z_i$ are all equal, i.e., z1 = ··· = zk = 1/k:
+
+Summing up this step: In each of the iterations the value of the solution x constructed increases by at most val(z) in expectation. Each element is covered with probability at least 1 − 1/e. But maybe we have not covered all elements after 2⌈ln n⌉ iterations. Here we show that we will have with high probability.
+The probability that element u is not covered at the end of the algorithm, i.e., after
+2⌈ln n⌉ iterations is
+Thus the probability that there is an uncovered element is at most n/n2 = 1/n.
+￼￼Clearly, where $x^*$ is an optimal solution for Minimum Set Cover. So, with high probability, the
+E [val(x)] $\le$ 2⌈ln n⌉ · val(z) $\le$ 2⌈ln n⌉ · val($x^*$),
+algorithm returns a feasible solution, whose expected value is at most 2⌈ln n⌉.
+
+\begin{algorithm}
+\caption{Repeat Randomize}
+\begin{algorithmic}[1]
+\Procedure{Repeat}{}
+\For {k=1 to c$\ln n$}
+	\State $\overline{x_i}$ = 1 with probability $x_i^*$
+	\If {$\overline{x_i}$ == 1}
+		\State Break
+	\EndIf
+\EndFor
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\section{The primal-dual method}
+For this approximation algorithm, instead of actually solving the dual LP, we can construct a feasible dual solution.After that we will construct the dual for the LP version of the set cover problem. We will introduce a variable $y_{i} \ge 0$ which is the variable in the dual. After that, we get the objective function that is  $\max{\sum_{i=1}^{n}{y_i}}$ with the constraint that $\sum_{i: e_i \in S_j} \le W_j$.
+
+After that we will use a greedy algorithm to find  a feasible solution using the primal-dual method.
+
+\begin{algorithm}
+\caption{Primal-dual algorithm for the set cover problem}
+\begin{algorithmic}[2]
+\State y $\leftarrow$ 0
+\State I $leftarrow$ $\emptyset$
+\While {there exists $e_i$ $\notin$ $\cup_{j \in I}{S_j}$}
+	\State Increase the dual variable $y_i$ until there is some l with $e_i \in S_l$ such that
+		$\sum_{j: e_j \in S_l}{y_j} = w_l$
+	\State I $leftarrow$ $I \cup {l}$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+Consider any feasible dual solution y, and let T be the set of the index of all tight dual constraints. If T is a set cover,then we are done. If T is not a set cover, then some item $e_i$ is uncovered, it is possible to improve the dual objective function by increasing $y_i$ by some ε > 0. More specifically, we can increase $y_i$ so that the constraint becomes tight for the subset $S_j$ that attains the minimum.  We repeat this process until T is a set cover. Since an additional element $e_i$ is covered each time, the process is repeated at most n times. So this algorithm is a f-approximation algorithm.
+
+We observe again that this particular algorithm allows us to have an a fortiori guarantee for each input, since we can compare the value of the solution obtained with the value of the dual solution generated by the algorithm. This ratio is guaranteed to be at most f by the proof above, but it might be significantly better.
+
+\bibliographystyle{abbrv}
+\bibliography{template}
+
+\end{document}
